@@ -1,0 +1,2604 @@
+templates:
+  standard_fetch:
+    micro_code:
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_PC
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+        - SET_M1_TO_LOW
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T3_0
+        - IN_DATA
+        - SET_M1_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_RFSH_TO_LOW
+        - SET_REG_TMP
+        - SET_REG_INST
+        - SET_ADDRESS_BUS_FROM_IR
+        - OUT_ADDRESS_BUS
+      - # T3_1
+        - CHECK_FOR_BUSREQ
+        - SET_MREQ_TO_LOW
+        - INC_REG_R
+        - CHANGE_STATE_TO_OPCODE
+    next_fetch:
+  standard_memory_read:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - XXX_1 # SET_REG_TMP_FROM_X
+        - CHANGE_STATE_TO_STANDARD_FETCH
+  standard_memory_write:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0
+        - SET_RFSH_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_TMP #or some orther 8 bit register
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - OUT_DATA
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - CHANGE_STATE_TO_STANDARD_FETCH
+  standard_io_read:
+    micro_code:
+      - # T1_0
+        - XXX_SET_ADDRESS_BUS
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_IORQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - XXX_SET_REG_TMP_FROM_X
+  standard_io_write:
+    micro_code:
+      - # T1_0
+        - XXX_SET_ADDRESS_BUS
+        - XXX_SET_DATA_BUS_FROM_X
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - OUT_DATA
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_WR_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+      - # T3_0
+      - # T3_1
+        - SET_WR_TO_HIGH
+        - SET_IORQ_TO_HIGH
+
+  alu_one_byte_reg:
+    micro_code:
+      - # T4_0
+        - XXX_1 # SET_REG_TMP_FROM_X
+        - SET_REG_ACU
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - XXX_ALU_OP
+        - SET_REG_TMP_FROM_A
+        - XXX_2 # SET_REG_X_FROM_TMP
+        - UPDATE_FLAGS_FROM_ALU
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+      # - # T1_0
+        
+      #   - SET_ADDRESS_BUS_FROM_PC
+      #   - OUT_ADDRESS_BUS
+      #   - SET_RFSH_TO_HIGH
+      #   - SET_M1_TO_LOW
+      # - # T1_1
+      #   
+      #   - SET_MREQ_TO_LOW
+      #   - SET_RD_TO_LOW
+      # - # T2_0
+      #   - INC_ADDRESS_BUS
+      # - # T2_1
+      #   - CHECK_FOR_WAIT
+      #   - SET_REG_PC_FROM_ADDRESS_BUS_
+      # - # T3_0
+      #   - IN_DATA
+      #   - SET_M1_TO_HIGH
+      #   - SET_MREQ_TO_HIGH
+      #   - SET_RD_TO_HIGH
+      #   - SET_RFSH_TO_LOW
+      #   - SET_REG_TMP
+      #   - SET_REG_INST
+      #   - SET_ADDRESS_BUS_FROM_IR
+      #   - OUT_ADDRESS_BUS
+      # - # T3_1
+      #   - SET_MREQ_TO_LOW
+      #   - INC_REG_R
+      #   - CHECK_FOR_BUSREQ
+      #   - CHANGE_STATE_TO_OPCODE
+  alu_bit_b_rr:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0 MEMORY READ
+        - XXX_SET_ADDRESS_BUS_FROM_X #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+      - # T2_1
+        - CHECK_FOR_WAIT
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - XXX_ALU_OP # SET_REG_TMP_FROM_X
+        - CHECK_FOR_BUSREQ
+      - # T4_0
+        - UPDATE_FLAGS_FROM_ALU
+      - # T4_1
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  inc_dec_ss:
+    micro_code:
+      - # T4_0
+        - XXX_1 # SET_ADDRESS_BUS_FROM_XX
+        - SET_REG_ACU
+        - CANCEL_BUSREQ_CHECK
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - XXX_ALU_OP # INC/DEC_ADDRESS_BUS
+      - # T5_0
+        - SET_RFSH_TO_HIGH
+        - XXX_2 # SET_REG_XX_FROM_ADRESS_BUS_
+      - # T5_1
+        - CHECK_FOR_BUSREQ
+      - # T6_0
+      - # T6_1
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  ld_r_r:
+    micro_code:
+      - # T4_0
+        - XXX_1 # SET_REG_TMP_FROM_X
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - CHANGE_STATE_TO_STANDARD_FETCH
+        - XXX_2 # SET_REG_Y_FROM_TMP
+    next_fetch:
+  ld_IR_A:
+    micro_code:
+      - # T4_0
+        - CANCEL_BUSREQ_CHECK
+        - SET_REG_TMP_FROM_A # SET_REG_TMP_FROM_X
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - XXX # SET_REG_Y_FROM_TMP
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+      - # T5_1
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  ld_A_IR:
+    micro_code:
+      - # T4_0
+        - XXX # SET_REG_TMP_FROM_X
+        - CANCEL_BUSREQ_CHECK
+      - # T4_1
+        - ALU_TEST_LD_IR_TMP
+        - SET_MREQ_TO_HIGH
+        - SET_REG_A_FROM_TMP # SET_REG_Y_FROM_TMP
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+        - UPDATE_FLAGS_FROM_ALU
+      - # T5_1
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  ld_r_n:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_PC
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - XXX_1 # SET_REG_TMP_FROM_X
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  ld_r_rr:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0
+        - XXX_ADDRESS #SET_ADDRESS_BUS_FROM_HL
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - XXX_1 # SET_REG_TMP_FROM_X
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  ld_rr_r:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0
+        - SET_RFSH_TO_HIGH
+        - XXX_ADDRESS #SET_ADDRESS_BUS_FROM_XX
+        - OUT_ADDRESS_BUS
+        - XXX_DATA #SET_DATA_BUS_FROM_REG_X
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  ld_mem_rr:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_Z_FROM_TMP # SET_REG_TMP_FROM_X
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_W_FROM_TMP # SET_REG_TMP_FROM_X
+      - # T1_0 MEMORY WRITE
+        - SET_ADDRESS_BUS_FROM_WZ #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - XXX_SET_DATA_BUS_FROM_L #or some orther 8 bit register
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - OUT_DATA
+        - SET_REG_WZ_FROM_ADDRESS_BUS_
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - XXX_SET_DATA_BUS_FROM_H #or some orther 8 bit register
+      - # T1_1 MEMORY WRITE
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  ld_mem_r:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_Z_FROM_TMP # SET_REG_TMP_FROM_X
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_W_FROM_TMP # SET_REG_TMP_FROM_X
+      - # T1_0 MEMORY WRITE
+        - SET_ADDRESS_BUS_FROM_WZ #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - XXX_SET_DATA_BUS_FROM_X #or some orther 8 bit register
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  ld_rr_mem:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_Z_FROM_TMP # SET_REG_TMP_FROM_X
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_W_FROM_TMP # SET_REG_TMP_FROM_X
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_WZ #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_WZ_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - XXX_SET_REG_L_FROM_TMP # SET_REG_TMP_FROM_X
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_WZ #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_WZ_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - XXX_SET_REG_H_FROM_TMP # SET_REG_TMP_FROM_X
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  alu_one_byte_reg_memory_read:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_PC
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+        - SET_REG_ACU
+      - # T3_1
+        - XXX_ALU_OP
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - CHANGE_STATE_TO_FETCH
+    next_fetch:
+      - # T1_0
+        - UPDATE_FLAGS_FROM_ALU
+        - SET_ADDRESS_BUS_FROM_PC
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+        - SET_M1_TO_LOW
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T3_0
+        - IN_DATA
+        - SET_M1_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_RFSH_TO_LOW
+        - SET_REG_TMP
+        - SET_REG_INST
+        - SET_ADDRESS_BUS_FROM_IR
+        - OUT_ADDRESS_BUS
+      - # T3_1
+        - SET_MREQ_TO_LOW
+        - INC_REG_R
+        - CHECK_FOR_BUSREQ
+        - CHANGE_STATE_TO_OPCODE
+  alu_one_byte_memory_read:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_PC
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+        - SET_REG_ACU
+      - # T3_1
+        - XXX_ALU_OP
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - CHANGE_STATE_TO_FETCH
+    next_fetch:
+      - # T1_0
+        - UPDATE_FLAGS_FROM_ALU
+        - SET_ADDRESS_BUS_FROM_PC
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+        - SET_M1_TO_LOW
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T3_0
+        - IN_DATA
+        - SET_M1_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_RFSH_TO_LOW
+        - SET_REG_TMP
+        - SET_REG_INST
+        - SET_ADDRESS_BUS_FROM_IR
+        - OUT_ADDRESS_BUS
+      - # T3_1
+        - SET_MREQ_TO_LOW
+        - INC_REG_R
+        - CHECK_FOR_BUSREQ
+        - CHANGE_STATE_TO_OPCODE
+  alu_one_byte_memory_read_write:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0
+        - XXX_SET_ADDRESS_BUS_FROM_XX
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+      - # T2_1
+        - CHECK_FOR_WAIT
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - XXX_ALU_OP
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - CHECK_FOR_BUSREQ
+      - # T4_0
+        - UPDATE_FLAGS_FROM_ALU
+      - # T4_1
+        - SET_REG_TMP_FROM_A
+      - # T1_0 WRITE
+        - XXX_SET_ADDRESS_BUS_FROM_YY
+        - OUT_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_TMP #or some orther 8 bit register
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  alu_rr_rr:
+    micro_code:
+      - # T4_0
+        - XXX_SET_REG_A_FROM_YL
+        - SET_REG_A_FROM_TMP
+        - XXX_SET_REG_TMP_FROM_XL
+      - # T4_1
+        - SAVE_FLAG_S7
+        - SAVE_FLAG_Z6
+        - SAVE_FLAG_P2
+        - SET_REG_ACU
+        - SET_MREQ_TO_HIGH
+      - # T1_0
+        - XXX_ALU_OP_L
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_REG_TMP_FROM_A
+        - UPDATE_FLAGS_FROM_ALU
+      - # T2_0
+        - SET_REG_Z_FROM_TMP
+      - # T2_1
+        - XXX_SET_REG_A_FROM_YH
+        - SET_REG_A_FROM_TMP
+        - XXX_SET_REG_TMP_FROM_XH
+      - # T3_0
+        - SAVE_FLAG_S7
+        - SAVE_FLAG_Z6
+        - SAVE_FLAG_P2
+        - SET_REG_ACU
+      - # T3_1
+        - XXX_ALU_OP_H
+        - CHECK_FOR_BUSREQ
+      - # T4_0
+        - SET_REG_TMP_FROM_A
+        - UPDATE_FLAGS_FROM_ALU
+      - # T4_1
+        - XXX_SET_REG_H_FROM_TMP
+      - # T1_0
+        - SET_REG_TMP_FROM_Z
+      - # T1_1
+        - XXX_SET_REG_L_FROM_TMP
+      - # T2_0
+      - # T2_1
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+      - # T3_1
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  ret_cond:
+    micro_code:
+      - # T4_0
+        - CANCEL_BUSREQ_CHECK
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+        - SET_RFSH_TO_HIGH
+      - # T5_1
+        - XXX_COND_CHANGE_STATE
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_SP #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_SP_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_Z_FROM_TMP
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_SP #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_SP_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_W_FROM_TMP
+        - CHANGE_STATE_TO_FETCH
+    next_fetch:
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_WZ
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+        - SET_M1_TO_LOW
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T3_0
+        - IN_DATA
+        - SET_M1_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_RFSH_TO_LOW
+        - SET_REG_TMP
+        - SET_REG_INST
+        - SET_ADDRESS_BUS_FROM_IR
+        - OUT_ADDRESS_BUS
+      - # T3_1
+        - SET_MREQ_TO_LOW
+        - INC_REG_R
+        - CHECK_FOR_BUSREQ
+        - CHANGE_STATE_TO_OPCODE
+  pop_template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - XXX_ADDRESS_1 #or some orther 16 bit register
+      - # T1_0 
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - XXX_SET_REG_FROM_ADDRESS_BUS_1
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - XXX_SET_LOW_BYTE
+      - # T1_0
+        - XXX_ADDRESS_2 #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - XXX_SET_REG_FROM_ADDRESS_BUS_2
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - XXX_SET_HIGH_BYTE
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  jp_template:
+    micro_code:
+      - #T4_0
+      - #T4_1
+        - SET_MREQ_TO_HIGH
+        - CHANGE_STATE_TO_FETCH
+    next_fetch:
+      - # T1_0
+        - XXX_SET_ADDRESS_BUS_FROM_X
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+        - SET_M1_TO_LOW
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T3_0
+        - IN_DATA
+        - SET_M1_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_RFSH_TO_LOW
+        - SET_REG_TMP
+        - SET_REG_INST
+        - SET_ADDRESS_BUS_FROM_IR
+        - OUT_ADDRESS_BUS
+      - # T3_1
+        - SET_MREQ_TO_LOW
+        - INC_REG_R
+        - CHECK_FOR_BUSREQ
+        - CHANGE_STATE_TO_OPCODE
+  jp_e_template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_PC
+        - OUT_ADDRESS_BUS
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - ALU_TEST_TMP
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - XXX_COND_CHANGE_STATE
+      - # T1_0
+        - SET_REG_W_BASED_ON_ALU_S_FLAG
+        - SET_REG_A_FROM_TMP
+        - SET_REG_TMP_FROM_PCL
+        - SET_REG_ACU
+      - # T1_1
+        - ALU_ADD
+      - # T2_0
+        - SET_REG_TMP_FROM_A
+        - SET_REG_Z_FROM_TMP
+      - # T2_1
+        - SET_REG_TMP_FROM_PCH
+      - # T3_0
+        - SET_REG_A_FROM_TMP
+      - # T3_1
+        - SET_REG_TMP_FROM_W
+        - SET_REG_ACU
+      - # T4_0
+        - ALU_ADC
+      - # T4_1
+        - SET_REG_TMP_FROM_A
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+        - SET_REG_W_FROM_TMP
+      - # T5_1
+        - CHANGE_STATE_TO_FETCH
+    next_fetch:
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_WZ
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+        - SET_M1_TO_LOW
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T3_0
+        - IN_DATA
+        - SET_M1_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_RFSH_TO_LOW
+        - SET_REG_TMP
+        - SET_REG_INST
+        - SET_ADDRESS_BUS_FROM_IR
+        - OUT_ADDRESS_BUS
+      - # T3_1
+        - SET_MREQ_TO_LOW
+        - INC_REG_R
+        - CHECK_FOR_BUSREQ
+        - CHANGE_STATE_TO_OPCODE
+  jp_cond_template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_Z_FROM_TMP
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_W_FROM_TMP
+        - CHANGE_STATE_TO_FETCH
+        - XXX_COND_CHANGE_STATE
+    next_fetch:
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_WZ
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+        - SET_M1_TO_LOW
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T3_0
+        - IN_DATA
+        - SET_M1_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_RFSH_TO_LOW
+        - SET_REG_TMP
+        - SET_REG_INST
+        - SET_ADDRESS_BUS_FROM_IR
+        - OUT_ADDRESS_BUS
+      - # T3_1
+        - SET_MREQ_TO_LOW
+        - INC_REG_R
+        - CHECK_FOR_BUSREQ
+        - CHANGE_STATE_TO_OPCODE
+  
+
+  push_template:
+    micro_code:
+      - # T4_0
+        - CANCEL_BUSREQ_CHECK
+        - SET_ADDRESS_BUS_FROM_SP
+      - # T4_1
+        - DEC_ADDRESS_BUS
+        - SET_MREQ_TO_HIGH
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+        - SET_RFSH_TO_HIGH
+        - SET_REG_SP_FROM_ADDRESS_BUS_
+      - # T5_1
+        - XXX_SET_TMP_REG_1
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_SP #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_TMP #or some orther 8 bit register
+      - # T1_1
+        - DEC_ADDRESS_BUS
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+        - SET_REG_SP_FROM_ADDRESS_BUS_
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - XXX_SET_TMP_REG_2
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_SP #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_TMP #or some orther 8 bit register
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  rst_template:
+    micro_code:
+      - # T4_0
+        - CANCEL_BUSREQ_CHECK
+        - SET_ADDRESS_BUS_FROM_SP
+        - SET_DATA_BUS_FROM_X
+        - SET_REG_TMP
+      - # T4_1
+        - DEC_ADDRESS_BUS
+        - SET_MREQ_TO_HIGH
+        - SET_REG_Z_FROM_TMP
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+        - SET_RFSH_TO_HIGH
+        - SET_REG_SP_FROM_ADDRESS_BUS_
+      - # T5_1
+        - SET_REG_TMP_FROM_PCH
+        - SET_ADDRESS_BUS_FROM_SP
+      - # T1_0
+        - OUT_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_TMP #or some orther 8 bit register
+      - # T1_1
+        - DEC_ADDRESS_BUS
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+        - SET_REG_SP_FROM_ADDRESS_BUS_
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_SP
+        - SET_REG_TMP_FROM_PCL
+      - # T1_0
+        - OUT_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_TMP #or some orther 8 bit register
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+        - SET_DATA_BUS_00h
+        - SET_REG_TMP
+      - # T2_1
+        - SET_REG_W_FROM_TMP
+        - SET_REG_TMP_FROM_PCL
+        - SET_DATA_BUS_FROM_TMP
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_WZ
+        - ID_ADDRESS_BUS
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+      # - # T1_0
+      #   - OUT_ADDRESS_BUS
+      #   - SET_M1_TO_LOW
+      # - # T1_1
+      #   - SET_MREQ_TO_LOW
+      #   - SET_RD_TO_LOW
+      # - # T2_0
+      #   - INC_ADDRESS_BUS
+      # - # T2_1
+      #   - CHECK_FOR_WAIT
+      #   - SET_REG_PC_FROM_ADDRESS_BUS_
+      # - # T3_0
+      #   - IN_DATA
+      #   - SET_M1_TO_HIGH
+      #   - SET_MREQ_TO_HIGH
+      #   - SET_RD_TO_HIGH
+      #   - SET_RFSH_TO_LOW
+      #   - SET_REG_TMP
+      #   - SET_REG_INST
+      #   - SET_ADDRESS_BUS_FROM_IR
+      #   - OUT_ADDRESS_BUS
+      # - # T3_1
+      #   - SET_MREQ_TO_LOW
+      #   - INC_REG_R
+      #   - CHANGE_STATE_TO_OPCODE
+  call_template:  #TODO FIX / BUSREQ
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_Z_FROM_TMP # SET_REG_TMP_FROM_X
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_W_FROM_TMP # SET_REG_TMP_FROM_X
+        - SET_ADDRESS_BUS_FROM_SP
+        - CHECK_FOR_BUSREQ
+        - XXX_CHANGE_STATE_COND_X
+      - # T4_0
+        - DEC_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_PCH
+        - SET_REG_TMP
+      - # T4_1
+        - SET_REG_SP_FROM_ADDRESS_BUS_
+        - SET_MREQ_TO_HIGH
+        - SET_REG_TMP_FROM_PCH
+      - # T1_0 MEMORY WRITE
+        - SET_ADDRESS_BUS_FROM_SP #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_TMP #or some orther 8 bit register
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+        - DEC_ADDRESS_BUS
+      - # T2_0
+        - OUT_DATA
+        - SET_REG_SP_FROM_ADDRESS_BUS_
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - SET_REG_TMP_FROM_PCL
+      - # T1_0 MEMORY WRITE
+        - SET_ADDRESS_BUS_FROM_SP #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_TMP #or some orther 8 bit register
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_WZ
+        - ID_ADDRESS_BUS
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - SET_ADDRESS_BUS_FROM_PC
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  EX_SP_RR_template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_SP
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_SP_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_Z_FROM_TMP
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_SP
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+      - # T2_1
+        - CHECK_FOR_WAIT
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_W_FROM_TMP
+        - CHECK_FOR_BUSREQ
+      - # T4_0
+      - # T4_1
+      - # T1_0 MEMORY WRITE
+        - XXX_SET_DATA_BUS_FROM_H
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+        - DEC_ADDRESS_BUS
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - SET_REG_SP_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+      - # T1_0 MEMORY WRITE
+        - SET_ADDRESS_BUS_FROM_SP
+        - OUT_ADDRESS_BUS
+        - XXX_SET_DATA_BUS_FROM_L
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+        - DEC_ADDRESS_BUS
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - SET_REG_SP_FROM_ADDRESS_BUS_
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+      - # T4_0
+        - SET_REG_TMP_FROM_Z
+      - # T4_1
+        - XXX_SET_REG_L_FROM_TMP
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+        - SET_REG_TMP_FROM_W
+      - # T5_1
+        - XXX_SET_REG_H_FROM_TMP
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+
+
+
+
+
+  # IX/IY +d instructions
+      
+  ld_r_rr_d:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0 MEMORY READ GET d
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_A_FROM_TMP # SET_REG_TMP_FROM_X
+      - # T1_0 IX + d
+        - SET_REG_W_0
+        - SET_REG_ACU
+        - XXX_SET_REG_TMP_FROM_XL
+      - # T1_1
+        - ALU_ADD
+      - # T2_0
+        - SET_REG_TMP_FROM_A
+      - # T2_1
+        - SET_REG_Z_FROM_TMP
+      - # T3_0
+        - SET_REG_TMP_FROM_W
+      - # T3_1
+        - SET_REG_A_FROM_TMP
+      - # T4_0
+        - SET_REG_ACU
+        - XXX_SET_REG_TMP_FROM_XH
+      - # T4_1
+        - ALU_ADC
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+        - SET_REG_TMP_FROM_A
+      - # T5_1
+        - SET_REG_W_FROM_TMP
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_WZ #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - XXX_SAVE_SET_REG_X_FROM_TMP # SET_REG_TMP_FROM_X
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  ld_rr_r_d:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0 MEMORY READ GET d
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_A_FROM_TMP # SET_REG_TMP_FROM_X
+      - # T1_0 IX + d
+        - SET_REG_W_0
+        - SET_REG_ACU
+        - XXX_SET_REG_TMP_FROM_XL
+      - # T1_1
+        - ALU_ADD
+      - # T2_0
+        - SET_REG_TMP_FROM_A
+      - # T2_1
+        - SET_REG_Z_FROM_TMP
+      - # T3_0
+        - SET_REG_TMP_FROM_W
+      - # T3_1
+        - SET_REG_A_FROM_TMP
+      - # T4_0
+        - SET_REG_ACU
+        - XXX_SET_REG_TMP_FROM_XH
+      - # T4_1
+        - ALU_ADC
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+        - SET_REG_TMP_FROM_A
+      - # T5_1
+        - SET_REG_W_FROM_TMP
+      - # T1_0
+        - SET_RFSH_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_WZ #SET_ADDRESS_BUS_FROM_XX
+        - OUT_ADDRESS_BUS
+        - XXX_DATA #SET_DATA_BUS_FROM_REG_X
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:  
+  ld_rr_n_d:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0 MEMORY READ GET d
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_A_FROM_TMP # SET_REG_TMP_FROM_X
+      - # T1_0 READ N AND IX+d
+        - SET_ADDRESS_BUS_FROM_PC
+        - OUT_ADDRESS_BUS
+        - SET_REG_W_0
+        - SET_REG_ACU
+        - XXX_SET_REG_TMP_FROM_XL
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+        - ALU_ADD
+      - # T2_0
+        - INC_ADDRESS_BUS
+        - SET_REG_TMP_FROM_A
+        - SET_REG_Z_FROM_TMP
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - SET_REG_TMP_FROM_W
+        - SET_REG_A_FROM_TMP
+      - # T3_0
+        - IN_DATA
+        - SET_REG_ACU
+        - XXX_SET_REG_TMP_FROM_XH
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - ALU_ADC
+      - # T4_0
+        - SET_REG_TMP_FROM_A
+      - # T4_1
+        - SET_REG_W_FROM_TMP
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+        - SET_REG_TMP # FROM IN_DATA
+      - # T5_1
+      - # T1_0 WRITE n
+        - SET_ADDRESS_BUS_FROM_WZ
+        - OUT_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_TMP
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  alu_bit_b_d_rr:
+    micro_code:
+      # - # T4_0
+      # - # T4_1
+      #   - SET_MREQ_TO_HIGH
+      # - # T1_0 MEMORY READ GET d
+      #   - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+      #   - OUT_ADDRESS_BUS
+      #   - SET_RFSH_TO_HIGH
+      # - # T1_1
+      #   - SET_MREQ_TO_LOW
+      #   - SET_RD_TO_LOW
+      # - # T2_0
+      #   - INC_ADDRESS_BUS
+      # - # T2_1
+      #   - CHECK_FOR_WAIT
+      #   - SET_REG_PC_FROM_ADDRESS_BUS_
+      # - # T3_0
+      #   - IN_DATA
+      #   - SET_REG_TMP
+      # - # T3_1
+      #   - SET_MREQ_TO_HIGH
+      #   - SET_RD_TO_HIGH
+      #   - SET_REG_A_FROM_TMP # SET_REG_TMP_FROM_X
+      # - # T1_0 IX + d
+      #   - SET_REG_W_0
+      #   - SET_REG_ACU
+      #   - XXX_SET_REG_TMP_FROM_XL
+      # - # T1_1
+      #   - ALU_ADD
+      # - # T2_0
+      #   - SET_REG_TMP_FROM_A
+      # - # T2_1
+      #   - SET_REG_Z_FROM_TMP
+      # - # T3_0
+      #   - SET_REG_TMP_FROM_W
+      # - # T3_1
+      #   - SET_REG_A_FROM_TMP
+      # - # T4_0
+      #   - SET_REG_ACU
+      #   - XXX_SET_REG_TMP_FROM_XH
+      # - # T4_1
+      #   - ALU_ADC
+      - # T5_0
+        - SET_REG_TMP_FROM_A
+      - # T5_1
+        - SET_REG_W_FROM_TMP
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_WZ #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+      - # T2_1
+        - CHECK_FOR_WAIT
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - XXX_ALU_OP # SET_REG_TMP_FROM_X
+        - CHECK_FOR_BUSREQ
+      - # T4_0
+        - UPDATE_FLAGS_FROM_ALU
+      - # T4_1
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  alu_one_byte_memory_read_d_write:
+    micro_code:
+      # - # T4_0
+      # - # T4_1
+      #   - SET_MREQ_TO_HIGH
+      # - # T1_0 MEMORY READ GET d
+      #   - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+      #   - OUT_ADDRESS_BUS
+      #   - SET_RFSH_TO_HIGH
+      # - # T1_1
+      #   - SET_MREQ_TO_LOW
+      #   - SET_RD_TO_LOW
+      # - # T2_0
+      #   - INC_ADDRESS_BUS
+      # - # T2_1
+      #   - CHECK_FOR_WAIT
+      #   - SET_REG_PC_FROM_ADDRESS_BUS_
+      # - # T3_0
+      #   - IN_DATA
+      #   - SET_REG_TMP
+      # - # T3_1
+      #   - SET_MREQ_TO_HIGH
+      #   - SET_RD_TO_HIGH
+      #   - SET_REG_A_FROM_TMP # SET_REG_TMP_FROM_X
+      # - # T1_0 IX + d
+      #   - SET_REG_W_0
+      #   - SET_REG_ACU
+      #   - XXX_SET_REG_TMP_FROM_XL
+      # - # T1_1
+      #   - ALU_ADD
+      # - # T2_0
+      #   - SET_REG_TMP_FROM_A
+      # - # T2_1
+      #   - SET_REG_Z_FROM_TMP
+      # - # T3_0
+      #   - SET_REG_TMP_FROM_W
+      # - # T3_1
+      #   - SET_REG_A_FROM_TMP
+      # - # T4_0
+      #   - SET_REG_ACU
+      #   - XXX_SET_REG_TMP_FROM_XH
+      # - # T4_1
+      #   - ALU_ADC
+      - # T5_0
+        - SET_REG_TMP_FROM_A
+      - # T5_1
+        - SET_REG_W_FROM_TMP
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_WZ
+        - OUT_ADDRESS_BUS
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+      - # T2_1
+        - CHECK_FOR_WAIT
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - XXX_ALU_OP
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - CHECK_FOR_BUSREQ
+      - # T4_0
+        - SET_REG_TMP_FROM_A
+        - UPDATE_FLAGS_FROM_ALU
+      - # T4_1
+      - # T1_0 WRITE
+        - SET_ADDRESS_BUS_FROM_WZ
+        - OUT_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_TMP #or some orther 8 bit register
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  dd_fd_alu_one_byte_memory_read_d_write:
+    micro_code:
+      # - # T4_0
+      # - # T4_1
+      #   - SET_MREQ_TO_HIGH
+      # - # T1_0 MEMORY READ GET d
+      #   - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+      #   - OUT_ADDRESS_BUS
+      #   - SET_RFSH_TO_HIGH
+      # - # T1_1
+      #   - SET_MREQ_TO_LOW
+      #   - SET_RD_TO_LOW
+      # - # T2_0
+      #   - INC_ADDRESS_BUS
+      # - # T2_1
+      #   - CHECK_FOR_WAIT
+      #   - SET_REG_PC_FROM_ADDRESS_BUS_
+      # - # T3_0
+      #   - IN_DATA
+      #   - SET_REG_TMP
+      # - # T3_1
+      #   - SET_MREQ_TO_HIGH
+      #   - SET_RD_TO_HIGH
+      #   - SET_REG_A_FROM_TMP # SET_REG_TMP_FROM_X
+      # - # T1_0 IX + d
+      #   - SET_REG_W_0
+      #   - SET_REG_ACU
+      #   - XXX_SET_REG_TMP_FROM_XL
+      # - # T1_1
+      #   - ALU_ADD
+      # - # T2_0
+      #   - SET_REG_TMP_FROM_A
+      # - # T2_1
+      #   - SET_REG_Z_FROM_TMP
+      # - # T3_0
+      #   - SET_REG_TMP_FROM_W
+      # - # T3_1
+      #   - SET_REG_A_FROM_TMP
+      # - # T4_0
+      #   - SET_REG_ACU
+      #   - XXX_SET_REG_TMP_FROM_XH
+      # - # T4_1
+      #   - ALU_ADC
+      - # T5_0
+        - SET_REG_TMP_FROM_A
+      - # T5_1
+        - SET_REG_W_FROM_TMP
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_WZ
+        - OUT_ADDRESS_BUS
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+      - # T2_1
+        - CHECK_FOR_WAIT
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - XXX_ALU_OP
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - CHECK_FOR_BUSREQ
+      - # T4_0
+        - SET_REG_TMP_FROM_A
+        - UPDATE_FLAGS_FROM_ALU
+      - # T4_1
+      - # T1_0 WRITE
+        - SET_ADDRESS_BUS_FROM_WZ
+        - OUT_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_TMP #or some orther 8 bit register
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch: 
+  alu_one_byte_reg_memory_read_d:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0 MEMORY READ GET d
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_A_FROM_TMP # SET_REG_TMP_FROM_X
+      - # T1_0 IX + d
+        - SET_REG_W_0
+        - SET_REG_ACU
+        - XXX_SET_REG_TMP_FROM_XL
+      - # T1_1
+        - ALU_ADD
+      - # T2_0
+        - SET_REG_TMP_FROM_A
+      - # T2_1
+        - SET_REG_Z_FROM_TMP
+      - # T3_0
+        - SET_REG_TMP_FROM_W
+      - # T3_1
+        - SET_REG_A_FROM_TMP
+      - # T4_0
+        - SET_REG_ACU
+        - XXX_SET_REG_TMP_FROM_XH
+      - # T4_1
+        - ALU_ADC
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+        - SET_REG_TMP_FROM_A
+      - # T5_1
+        - SET_REG_W_FROM_TMP
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_WZ
+        - OUT_ADDRESS_BUS
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - XXX_ALU_OP
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - CHANGE_STATE_TO_FETCH
+    next_fetch:
+      - # T1_0
+        - UPDATE_FLAGS_FROM_ALU
+        - SET_ADDRESS_BUS_FROM_PC
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+        - SET_M1_TO_LOW
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T3_0
+        - IN_DATA
+        - SET_M1_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_RFSH_TO_LOW
+        - SET_REG_TMP
+        - SET_REG_INST
+        - SET_ADDRESS_BUS_FROM_IR
+        - OUT_ADDRESS_BUS
+      - # T3_1
+        - SET_MREQ_TO_LOW
+        - INC_REG_R
+        - CHECK_FOR_BUSREQ
+        - CHANGE_STATE_TO_OPCODE
+
+  block_transfer:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_HL #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - XXX_DE_HL_OPERATION
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_HL_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+      - # T1_0 MEMORY WRITE
+        - SET_ADDRESS_BUS_FROM_DE #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_TMP #or some orther 8 bit register
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+        - XXX_DE_HL_OPERATION
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_REG_DE_FROM_ADDRESS_BUS_
+        - SET_WR_TO_LOW
+      - # T3_0
+        - OUT_DATA
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - DEC_ADDRESS_BUS
+      - # T4_0
+        - SET_REG_BC_FROM_ADDRESS_BUS_
+      - # T4_1
+        - SET_ADDRESS_BUS_FROM_BC
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+      - # T5_1
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+
+  block_transfer_rewind:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_HL #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - XXX_DE_HL_OPERATION
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_HL_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+      - # T1_0 MEMORY WRITE
+        - SET_ADDRESS_BUS_FROM_DE #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_TMP #or some orther 8 bit register
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+        - XXX_DE_HL_OPERATION
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_REG_DE_FROM_ADDRESS_BUS_
+        - SET_WR_TO_LOW
+      - # T3_0
+        - OUT_DATA
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - DEC_ADDRESS_BUS
+      - # T4_0
+        - SET_REG_BC_FROM_ADDRESS_BUS_
+      - # T4_1
+        - SET_ADDRESS_BUS_FROM_BC
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+      - # T5_1
+        - CHANGE_STATE_IF_ADDRESS_0_TO_STANDARD_FETCH
+      - # T1_0 REWIND PC
+        - SET_ADDRESS_BUS_FROM_PC
+      - # T1_1 REWIND PC
+        - DEC_ADDRESS_BUS
+      - # T2_0
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T2_1
+        - SET_ADDRESS_BUS_FROM_PC
+      - # T3_0
+        - DEC_ADDRESS_BUS
+      - # T3_1
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T4_0
+      - # T4_1
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+      - # T5_1
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+
+  search:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_HL #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - XXX_DE_HL_OPERATION
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_HL_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_ACU
+      - # T1_0
+        - ALU_CP
+      - # T1_1
+      - # T2_0
+      - # T2_1
+      - # T3_0
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T3_1
+        - DEC_ADDRESS_BUS
+      - # T4_0
+        - SET_REG_BC_FROM_ADDRESS_BUS_
+      - # T4_1
+        - SET_ADDRESS_BUS_FROM_BC
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+        - SET_FLAG_P_V_NON_ZERO_BC
+      - # T5_1
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+
+  search_rewind:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_HL #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - XXX_DE_HL_OPERATION
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_HL_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_ACU
+      - # T1_0
+        - ALU_CP
+      - # T1_1
+      - # T2_0
+      - # T2_1
+      - # T3_0
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T3_1
+        - DEC_ADDRESS_BUS
+      - # T4_0
+        - SET_REG_BC_FROM_ADDRESS_BUS_
+      - # T4_1
+        - SET_ADDRESS_BUS_FROM_BC
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+        - SET_FLAG_P_V_NON_ZERO_BC
+      - # T5_1
+        - CHANGE_STATE_IF_P_V_0_TO_STANDARD_FETCH
+        - CHANGE_STATE_IF_ADDRESS_0_TO_STANDARD_FETCH
+      - # T1_0 REWIND PC
+        - SET_ADDRESS_BUS_FROM_PC
+      - # T1_1
+        - DEC_ADDRESS_BUS
+      - # T2_0
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T2_1
+        - SET_ADDRESS_BUS_FROM_PC
+      - # T3_0
+        - DEC_ADDRESS_BUS
+      - # T3_1
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T4_0
+      - # T4_1
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+      - # T5_1
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+
+  block_i_transfer:
+    micro_code:
+      - # T4_0
+        - CANCEL_BUSREQ_CHECK
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+        - SET_RFSH_TO_HIGH
+      - # T5_1
+      - # T1_0 IO READ
+        - SET_ADDRESS_BUS_FROM_BC
+        - OUT_ADDRESS_BUS
+        - SET_REG_TMP_FROM_B
+      - # T1_1
+        - ALU_DEC_TMP
+      - # T2_0
+        - SET_REG_TMP_FROM_A
+        - SET_IORQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_1
+        - SET_REG_B_FROM_TMP
+        - UPDATE_FLAGS_FROM_ALU
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_IORQ_TO_HIGH
+        - SET_RD_TO_HIGH
+      - # T1_0 MEMORY WRITE
+        - SET_ADDRESS_BUS_FROM_HL #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_TMP #or some orther 8 bit register
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+        - XXX_HL_OPERATION
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_REG_HL_FROM_ADDRESS_BUS_
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+
+  block_i_transfer_rewind:
+    micro_code:
+      - # T4_0
+        - CANCEL_BUSREQ_CHECK
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+        - SET_RFSH_TO_HIGH
+      - # T5_1
+      - # T1_0 IO READ
+        - SET_ADDRESS_BUS_FROM_BC
+        - OUT_ADDRESS_BUS
+        - SET_REG_TMP_FROM_B
+      - # T1_1
+        - ALU_DEC_TMP
+      - # T2_0
+        - SET_REG_TMP_FROM_A
+        - SET_IORQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_1
+        - SET_REG_B_FROM_TMP
+        - UPDATE_FLAGS_FROM_ALU
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_IORQ_TO_HIGH
+        - SET_RD_TO_HIGH
+      - # T1_0 MEMORY WRITE
+        - SET_ADDRESS_BUS_FROM_HL #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_TMP #or some orther 8 bit register
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+        - XXX_HL_OPERATION
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_REG_HL_FROM_ADDRESS_BUS_
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - CHANGE_STATE_IF_Z_1_TO_STANDARD_FETCH
+      - # T1_0 REWIND PC
+        - SET_ADDRESS_BUS_FROM_PC
+      - # T1_1
+        - DEC_ADDRESS_BUS
+      - # T2_0
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T2_1
+        - SET_ADDRESS_BUS_FROM_PC
+      - # T3_0
+        - DEC_ADDRESS_BUS
+      - # T3_1
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T4_0
+      - # T4_1
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+      - # T5_1
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+
+  block_o_transfer:
+    micro_code:
+      - # T4_0
+        - CANCEL_BUSREQ_CHECK
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_REG_TMP_FROM_B
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+        - ALU_DEC_TMP
+        - SET_RFSH_TO_HIGH
+      - # T5_1
+        - SET_REG_TMP_FROM_A
+        - SET_REG_B_FROM_TMP
+        - UPDATE_FLAGS_FROM_ALU
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_HL #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - XXX_HL_OPERATION
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_HL_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_BC
+        - SET_DATA_BUS_FROM_TMP
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+        - SET_IORQ_TO_LOW
+        - SET_WR_TO_LOW
+      - # T2_1
+        - OUT_DATA
+      - # TW_0
+        - OUT_DATA
+      - # TW_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_IORQ_TO_HIGH
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  
+  block_o_transfer_rewind:
+    micro_code:
+      - # T4_0
+        - CANCEL_BUSREQ_CHECK
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_REG_TMP_FROM_B
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+        - ALU_DEC_TMP
+        - SET_RFSH_TO_HIGH
+      - # T5_1
+        - SET_REG_TMP_FROM_A
+        - SET_REG_B_FROM_TMP
+        - UPDATE_FLAGS_FROM_ALU
+      - # T1_0 MEMORY READ
+        - SET_ADDRESS_BUS_FROM_HL #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - XXX_HL_OPERATION
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_HL_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_BC
+        - SET_DATA_BUS_FROM_TMP
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+        - SET_IORQ_TO_LOW
+        - SET_WR_TO_LOW
+      - # T2_1
+        - OUT_DATA
+      - # TW_0
+        - OUT_DATA
+      - # TW_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_IORQ_TO_HIGH
+        - CHANGE_STATE_IF_Z_1_TO_STANDARD_FETCH
+      - # T1_0 REWIND PC
+        - SET_ADDRESS_BUS_FROM_PC
+      - # T1_1
+        - DEC_ADDRESS_BUS
+      - # T2_0
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T2_1
+        - SET_ADDRESS_BUS_FROM_PC
+      - # T3_0
+        - DEC_ADDRESS_BUS
+      - # T3_1
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T4_0
+      - # T4_1
+        - CHECK_FOR_BUSREQ
+      - # T5_0
+      - # T5_1
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+
+  rrd_rrl_template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+      - # T1_0
+      - # T1_1
+      - # T2_0
+      - # T2_1
+      - # T3_0
+      - # T3_1
+        - CHECK_FOR_BUSREQ
+      - # T4_0
+        - XXX_ALU
+      - # T4_1
+        - UPDATE_FLAGS_FROM_ALU
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_DATA_BUS_FROM_TMP #or some orther 8 bit register
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - OUT_DATA
+      - # T2_0
+        - OUT_DATA
+      - # T2_1
+        - OUT_DATA
+        - CHECK_FOR_WAIT
+        - SET_WR_TO_LOW
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - OUT_DATA
+      - # T3_1
+        - OUT_DATA
+        - SET_WR_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:

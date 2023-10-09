@@ -1,0 +1,954 @@
+ed_opcodes:
+
+  # LDI
+  LDI:
+    val: '0xA0'
+    template: block_transfer
+    changes:
+      XXX_DE_HL_OPERATION: INC_ADDRESS_BUS
+
+  # LDIR
+  LDIR:
+    val: '0xB0'
+    template: block_transfer_rewind
+    changes:
+      XXX_DE_HL_OPERATION: INC_ADDRESS_BUS
+  
+  # LDD
+  LDD:
+    val: '0xA8'
+    template: block_transfer
+    changes:
+      XXX_DE_HL_OPERATION: DEC_ADDRESS_BUS
+  
+  # LDDR
+  LDDR:
+    val: '0xB8'
+    template: block_transfer_rewind
+    changes:
+      XXX_DE_HL_OPERATION: DEC_ADDRESS_BUS
+  
+  # CPI
+  CPI:
+    val: '0xA1'
+    template: search
+    changes:
+      XXX_DE_HL_OPERATION: INC_ADDRESS_BUS
+
+  # CPIR
+  CPIR:
+    val: '0xB1'
+    template: search_rewind
+    changes:
+      XXX_DE_HL_OPERATION: INC_ADDRESS_BUS
+
+  # CPD
+  CPD:
+    val: '0xA9'
+    template: search
+    changes:
+      XXX_DE_HL_OPERATION: DEC_ADDRESS_BUS
+
+  # CPDR
+  CPDR:
+    val: '0xB9'
+    template: search_rewind
+    changes:
+      XXX_DE_HL_OPERATION: DEC_ADDRESS_BUS
+
+  # INI
+  INI:
+    val: '0xA2'
+    template: block_i_transfer
+    changes:
+      XXX_HL_OPERATION: INC_ADDRESS_BUS
+  
+  # INIR
+  INIR:
+    val: '0xB2'
+    template: block_i_transfer_rewind
+    changes:
+      XXX_HL_OPERATION: INC_ADDRESS_BUS
+
+  # IND
+  IND:
+    val: '0xAA'
+    template: block_i_transfer
+    changes:
+      XXX_HL_OPERATION: DEC_ADDRESS_BUS
+
+  # INDR
+  INDR:
+    val: '0xBA'
+    template: block_i_transfer_rewind
+    changes:
+      XXX_HL_OPERATION: DEC_ADDRESS_BUS
+
+  # OUTI
+  OUTI:
+    val: '0xA3'
+    template: block_o_transfer
+    changes:
+      XXX_HL_OPERATION: INC_ADDRESS_BUS
+  
+  # OTIR
+  OTIR:
+    val: '0xB3'
+    template: block_o_transfer_rewind
+    changes:
+      XXX_HL_OPERATION: INC_ADDRESS_BUS
+
+  # OUTD
+  OUTD:
+    val: '0xAB'
+    template: block_o_transfer
+    changes:
+      XXX_HL_OPERATION: DEC_ADDRESS_BUS
+
+  # OTDR
+  OTDR:
+    val: '0xBB'
+    template: block_o_transfer_rewind
+    changes:
+      XXX_HL_OPERATION: DEC_ADDRESS_BUS
+
+  # NEG
+  NEG:
+    val: '0x44'
+    template: alu_one_byte_reg
+    changes:
+      XXX_1: SKIP_INSTRUCTION
+      XXX_2: SKIP_INSTRUCTION
+      XXX_ALU_OP: ALU_NEG
+
+  # IN r,(C)
+  IN_A_C:
+    val: '0x78'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T1_0
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_IORQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_A_FROM_TMP
+        - ALU_TEST_TMP
+    next_fetch:
+  IN_B_C:
+    val: '0x40'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T1_0
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_IORQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_B_FROM_TMP
+        - ALU_TEST_TMP
+    next_fetch:
+  IN_C_C:
+    val: '0x48'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T1_0
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_IORQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_C_FROM_TMP
+        - ALU_TEST_TMP
+    next_fetch:
+  IN_D_C:
+    val: '0x50'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T1_0
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_IORQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_D_FROM_TMP
+        - ALU_TEST_TMP
+    next_fetch:
+  IN_E_C:
+    val: '0x58'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T1_0
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_IORQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_E_FROM_TMP
+        - ALU_TEST_TMP
+    next_fetch:
+  IN_H_C:
+    val: '0x60'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T1_0
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_IORQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_H_FROM_TMP
+        - ALU_TEST_TMP
+    next_fetch:
+  IN_L_C:
+    val: '0x68'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T1_0
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_IORQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_L_FROM_TMP
+        - ALU_TEST_TMP
+    next_fetch:
+  IN_F_C:
+    val: '0x70'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T1_0
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_IORQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - ALU_TEST_TMP
+    next_fetch:
+
+  # OUT (C),r
+  OUT_C_A:
+    val: '0x79'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T1_0
+        - SET_DATA_BUS_FROM_A
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - OUT_DATA
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_WR_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+      - # T3_1
+        - SET_WR_TO_HIGH
+        - SET_IORQ_TO_HIGH
+    next_fetch:
+  OUT_C_B:
+    val: '0x41'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T1_0
+        - SET_DATA_BUS_FROM_B
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - OUT_DATA
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_WR_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+      - # T3_1
+        - SET_WR_TO_HIGH
+        - SET_IORQ_TO_HIGH
+    next_fetch:
+  OUT_C_C:
+    val: '0x49'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T1_0
+        - SET_DATA_BUS_FROM_C
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - OUT_DATA
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_WR_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+      - # T3_1
+        - SET_WR_TO_HIGH
+        - SET_IORQ_TO_HIGH
+    next_fetch:
+  OUT_C_D:
+    val: '0x51'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T1_0
+        - SET_DATA_BUS_FROM_D
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - OUT_DATA
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_WR_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+      - # T3_1
+        - SET_WR_TO_HIGH
+        - SET_IORQ_TO_HIGH
+    next_fetch:
+  OUT_C_E:
+    val: '0x59'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T1_0
+        - SET_DATA_BUS_FROM_E
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - OUT_DATA
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_WR_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+      - # T3_1
+        - SET_WR_TO_HIGH
+        - SET_IORQ_TO_HIGH
+    next_fetch:
+  OUT_C_H:
+    val: '0x61'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T1_0
+        - SET_DATA_BUS_FROM_H
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - OUT_DATA
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_WR_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+      - # T3_1
+        - SET_WR_TO_HIGH
+        - SET_IORQ_TO_HIGH
+    next_fetch:
+  OUT_C_L:
+    val: '0x69'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T1_0
+        - SET_DATA_BUS_FROM_L
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - OUT_DATA
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_WR_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+      - # T3_1
+        - SET_WR_TO_HIGH
+        - SET_IORQ_TO_HIGH
+    next_fetch:
+  OUT_C_0:
+    val: '0x71'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_ADDRESS_BUS_FROM_BC
+      - # T1_0
+        - SET_DATA_BUS_00h
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - OUT_DATA
+      - # T2_0
+        - SET_IORQ_TO_LOW
+        - SET_WR_TO_LOW
+      - # T2_1
+      - # TW_0
+      - # TW_1
+        - CHECK_FOR_WAIT
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+      - # T3_1
+        - SET_WR_TO_HIGH
+        - SET_IORQ_TO_HIGH
+    next_fetch:
+
+  # LD (nn), dd
+  LD_MEM_BC:
+    val: '0x43'
+    template: ld_mem_rr
+    changes:
+      XXX_SET_DATA_BUS_FROM_L: SET_DATA_BUS_FROM_C
+      XXX_SET_DATA_BUS_FROM_H: SET_DATA_BUS_FROM_B
+  LD_MEM_DE:
+    val: '0x53'
+    template: ld_mem_rr
+    changes:
+      XXX_SET_DATA_BUS_FROM_L: SET_DATA_BUS_FROM_E
+      XXX_SET_DATA_BUS_FROM_H: SET_DATA_BUS_FROM_D
+  ED_LD_MEM_HL:
+    val: '0x63'
+    template: ld_mem_rr
+    changes:
+      XXX_SET_DATA_BUS_FROM_L: SET_DATA_BUS_FROM_L
+      XXX_SET_DATA_BUS_FROM_H: SET_DATA_BUS_FROM_H
+  LD_MEM_SP:
+    val: '0x73'
+    template: ld_mem_rr
+    changes:
+      XXX_SET_DATA_BUS_FROM_L: SET_DATA_BUS_FROM_SPL
+      XXX_SET_DATA_BUS_FROM_H: SET_DATA_BUS_FROM_SPH
+
+  # LD dd, (nn)
+  LD_BC_MEM:
+    val: '0x4B'
+    template: ld_rr_mem
+    changes:
+      XXX_SET_REG_L_FROM_TMP: SET_REG_TMP_FROM_C
+      XXX_SET_REG_H_FROM_TMP: SET_REG_TMP_FROM_B
+  LD_DE_MEM:
+    val: '0x5B'
+    template: ld_rr_mem
+    changes:
+      XXX_SET_REG_L_FROM_TMP: SET_REG_TMP_FROM_E
+      XXX_SET_REG_H_FROM_TMP: SET_REG_TMP_FROM_D
+  ED_LD_HL_MEM:
+    val: '0x6B'
+    template: ld_rr_mem
+    changes:
+      XXX_SET_REG_L_FROM_TMP: SET_REG_TMP_FROM_L
+      XXX_SET_REG_H_FROM_TMP: SET_REG_TMP_FROM_H
+  LD_SP_MEM:
+    val: '0x7B'
+    template: ld_rr_mem
+    changes:
+      XXX_SET_REG_L_FROM_TMP: SET_REG_TMP_FROM_SPL
+      XXX_SET_REG_H_FROM_TMP: SET_REG_TMP_FROM_SPH
+
+  # LD I, A
+  LD_I_A:
+    val: '0x47'
+    template: ld_IR_A
+    changes:
+      XXX: SET_REG_I_FROM_TMP
+  # LD R, A
+  LD_R_A:
+    val: '0x4F'
+    template: ld_IR_A
+    changes:
+      XXX: SET_REG_R_FROM_TMP
+  
+  # LD A, I
+  LD_A_I:
+    val: '0x57'
+    template: ld_A_IR
+    changes:
+      XXX: SET_REG_A_FROM_TMP
+  # LD A, R
+  LD_A_R:
+    val: '0x5F'
+    template: ld_A_IR
+    changes:
+      XXX: SET_REG_A_FROM_TMP
+
+  # SBC HL, rr
+  SBC_HL_BC:
+    val: '0x42'
+    template: alu_rr_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_L
+      XXX_SET_REG_A_FROM_YL: SET_REG_TMP_FROM_C
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_H
+      XXX_SET_REG_A_FROM_YH: SET_REG_TMP_FROM_B
+      XXX_SET_REG_H_FROM_TMP: SET_REG_H_FROM_TMP
+      XXX_SET_REG_L_FROM_TMP: SET_REG_L_FROM_TMP
+      XXX_ALU_OP_L: ALU_SBC
+      XXX_ALU_OP_H: ALU_SBC
+  SBC_HL_DE:
+    val: '0x52'
+    template: alu_rr_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_L
+      XXX_SET_REG_A_FROM_YL: SET_REG_TMP_FROM_E
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_H
+      XXX_SET_REG_A_FROM_YH: SET_REG_TMP_FROM_D
+      XXX_SET_REG_H_FROM_TMP: SET_REG_H_FROM_TMP
+      XXX_SET_REG_L_FROM_TMP: SET_REG_L_FROM_TMP
+      XXX_ALU_OP_L: ALU_SBC
+      XXX_ALU_OP_H: ALU_SBC
+  SBC_HL_HL:
+    val: '0x62'
+    template: alu_rr_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_L
+      XXX_SET_REG_A_FROM_YL: SET_REG_TMP_FROM_L
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_H
+      XXX_SET_REG_A_FROM_YH: SET_REG_TMP_FROM_H
+      XXX_SET_REG_H_FROM_TMP: SET_REG_H_FROM_TMP
+      XXX_SET_REG_L_FROM_TMP: SET_REG_L_FROM_TMP
+      XXX_ALU_OP_L: ALU_SBC
+      XXX_ALU_OP_H: ALU_SBC
+  SBC_HL_SP:
+    val: '0x72'
+    template: alu_rr_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_L
+      XXX_SET_REG_A_FROM_YL: SET_REG_TMP_FROM_SPL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_H
+      XXX_SET_REG_A_FROM_YH: SET_REG_TMP_FROM_SPH
+      XXX_SET_REG_H_FROM_TMP: SET_REG_H_FROM_TMP
+      XXX_SET_REG_L_FROM_TMP: SET_REG_L_FROM_TMP
+      XXX_ALU_OP_L: ALU_SBC
+      XXX_ALU_OP_H: ALU_SBC
+  
+  # ADC HL, rr
+  ADC_HL_BC:
+    val: '0x4A'
+    template: alu_rr_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_L
+      XXX_SET_REG_A_FROM_YL: SET_REG_TMP_FROM_C
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_H
+      XXX_SET_REG_A_FROM_YH: SET_REG_TMP_FROM_B
+      XXX_SET_REG_H_FROM_TMP: SET_REG_H_FROM_TMP
+      XXX_SET_REG_L_FROM_TMP: SET_REG_L_FROM_TMP
+      XXX_ALU_OP_L: ALU_ADC
+      XXX_ALU_OP_H: ALU_ADC
+  ADC_HL_DE:
+    val: '0x5A'
+    template: alu_rr_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_L
+      XXX_SET_REG_A_FROM_YL: SET_REG_TMP_FROM_E
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_H
+      XXX_SET_REG_A_FROM_YH: SET_REG_TMP_FROM_D
+      XXX_SET_REG_H_FROM_TMP: SET_REG_H_FROM_TMP
+      XXX_SET_REG_L_FROM_TMP: SET_REG_L_FROM_TMP
+      XXX_ALU_OP_L: ALU_ADC
+      XXX_ALU_OP_H: ALU_ADC
+  ADC_HL_HL:
+    val: '0x6A'
+    template: alu_rr_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_L
+      XXX_SET_REG_A_FROM_YL: SET_REG_TMP_FROM_L
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_H
+      XXX_SET_REG_A_FROM_YH: SET_REG_TMP_FROM_H
+      XXX_SET_REG_H_FROM_TMP: SET_REG_H_FROM_TMP
+      XXX_SET_REG_L_FROM_TMP: SET_REG_L_FROM_TMP
+      XXX_ALU_OP_L: ALU_ADC
+      XXX_ALU_OP_H: ALU_ADC
+  ADC_HL_SP:
+    val: '0x7A'
+    template: alu_rr_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_L
+      XXX_SET_REG_A_FROM_YL: SET_REG_TMP_FROM_SPL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_H
+      XXX_SET_REG_A_FROM_YH: SET_REG_TMP_FROM_SPH
+      XXX_SET_REG_H_FROM_TMP: SET_REG_H_FROM_TMP
+      XXX_SET_REG_L_FROM_TMP: SET_REG_L_FROM_TMP
+      XXX_ALU_OP_L: ALU_ADC
+      XXX_ALU_OP_H: ALU_ADC
+
+  # IM
+  IM_0:
+    val: '0x46'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_IM_TO_0
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  IM_1:
+    val: '0x56'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_IM_TO_1
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+  IM_2:
+    val: '0x5E'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - SET_IM_TO_2
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+
+  # RETN
+  RETN:
+    val: '0x45'
+    template:
+    micro_code:
+      - # T4_0
+        - MV_IFF2_TO_IFF1
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_SP #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_SP_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_Z_FROM_TMP
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_SP #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_SP_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_W_FROM_TMP
+    next_fetch:
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_WZ
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+        - SET_M1_TO_LOW
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T3_0
+        - IN_DATA
+        - SET_M1_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_RFSH_TO_LOW
+        - SET_REG_TMP
+        - SET_REG_INST
+        - SET_ADDRESS_BUS_FROM_IR
+        - OUT_ADDRESS_BUS
+      - # T3_1
+        - SET_MREQ_TO_LOW
+        - INC_REG_R
+        - CHECK_FOR_BUSREQ
+        - CHANGE_STATE_TO_OPCODE
+
+  # RETI
+  RETI:
+    val: '0x4D'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_SP #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_SP_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_Z_FROM_TMP
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_SP #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_SP_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_W_FROM_TMP
+    next_fetch:
+      - # T1_0
+        - SET_ADDRESS_BUS_FROM_WZ
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+        - SET_M1_TO_LOW
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T3_0
+        - IN_DATA
+        - SET_M1_TO_HIGH
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_RFSH_TO_LOW
+        - SET_REG_TMP
+        - SET_REG_INST
+        - SET_ADDRESS_BUS_FROM_IR
+        - OUT_ADDRESS_BUS
+      - # T3_1
+        - SET_MREQ_TO_LOW
+        - INC_REG_R
+        - CHECK_FOR_BUSREQ
+        - CHANGE_STATE_TO_OPCODE
+  
+  # RRD
+  RRD:
+    val: '0x67'
+    template: rrd_rrl_template
+    changes:
+      XXX_ALU: ALU_RRD
+
+  # RLD
+  RLD:
+    val: '0x6F'
+    template: rrd_rrl_template
+    changes:
+      XXX_ALU: ALU_RLD

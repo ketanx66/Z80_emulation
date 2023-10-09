@@ -1,0 +1,421 @@
+fd_opcodes:
+  # ADD IY, rr
+  ADD_IY_BC:
+    val: '0x09'
+    template: alu_rr_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_A_FROM_YL: SET_REG_TMP_FROM_C
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_SET_REG_A_FROM_YH: SET_REG_TMP_FROM_B
+      XXX_SET_REG_H_FROM_TMP: SET_REG_IYH_FROM_TMP
+      XXX_SET_REG_L_FROM_TMP: SET_REG_IYL_FROM_TMP
+      XXX_ALU_OP_L: ALU_ADD
+      XXX_ALU_OP_H: ALU_ADC
+  ADD_IY_DE:
+    val: '0x19'
+    template: alu_rr_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_A_FROM_YL: SET_REG_TMP_FROM_E
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_SET_REG_A_FROM_YH: SET_REG_TMP_FROM_D
+      XXX_SET_REG_H_FROM_TMP: SET_REG_IYH_FROM_TMP
+      XXX_SET_REG_L_FROM_TMP: SET_REG_IYL_FROM_TMP
+      XXX_ALU_OP_L: ALU_ADD
+      XXX_ALU_OP_H: ALU_ADC
+  ADD_IY_IY:
+    val: '0x29'
+    template: alu_rr_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_A_FROM_YL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_SET_REG_A_FROM_YH: SET_REG_TMP_FROM_IYH
+      XXX_SET_REG_H_FROM_TMP: SET_REG_IYH_FROM_TMP
+      XXX_SET_REG_L_FROM_TMP: SET_REG_IYL_FROM_TMP
+      XXX_ALU_OP_L: ALU_ADD
+      XXX_ALU_OP_H: ALU_ADC
+  ADD_IY_SP:
+    val: '0x39'
+    template: alu_rr_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_A_FROM_YL: SET_REG_TMP_FROM_SPL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_SET_REG_A_FROM_YH: SET_REG_TMP_FROM_SPH
+      XXX_SET_REG_H_FROM_TMP: SET_REG_IYH_FROM_TMP
+      XXX_SET_REG_L_FROM_TMP: SET_REG_IYL_FROM_TMP
+      XXX_ALU_OP_L: ALU_ADD
+      XXX_ALU_OP_H: ALU_ADC
+
+  # LD IY, nn
+  LD_IY_nn:
+    val: '0x21'
+    template: pop_template
+    changes:
+      XXX_ADDRESS_1: SET_ADDRESS_BUS_FROM_PC
+      XXX_ADDRESS_2: SET_ADDRESS_BUS_FROM_PC
+      XXX_SET_REG_FROM_ADDRESS_BUS_1: SET_REG_PC_FROM_ADDRESS_BUS_
+      XXX_SET_REG_FROM_ADDRESS_BUS_2: SET_REG_PC_FROM_ADDRESS_BUS_
+      XXX_SET_LOW_BYTE: SET_REG_IYL_FROM_TMP
+      XXX_SET_HIGH_BYTE: SET_REG_IYH_FROM_TMP
+
+  # LD (nn), IY
+  LD_MEM_IY:
+    val: '0x22'
+    template: ld_mem_rr
+    changes:
+      XXX_SET_DATA_BUS_FROM_L: SET_DATA_BUS_FROM_IYL
+      XXX_SET_DATA_BUS_FROM_H: SET_DATA_BUS_FROM_IYH
+
+  # LD IY, (nn)
+  LD_IY_MEM:
+    val: '0x2A'
+    template: ld_rr_mem
+    changes:
+      XXX_SET_REG_H_FROM_TMP: SET_REG_IYH_FROM_TMP
+      XXX_SET_REG_L_FROM_TMP: SET_REG_IYL_FROM_TMP
+
+  # INC IY
+  INC_IY:
+    val: '0x23'
+    template: inc_dec_ss
+    changes:
+      XXX_1: SET_ADDRESS_BUS_FROM_IY
+      XXX_2: INC_ADDRESS_BUS
+      XXX_ALU_OP: SET_REG_IY_FROM_ADDRESS_BUS_
+
+  # DEC IY
+  DEC_IY:
+    val: '0x2B'
+    template: inc_dec_ss
+    changes:
+      XXX_1: SET_ADDRESS_BUS_FROM_IY
+      XXX_2: DEC_ADDRESS_BUS
+      XXX_ALU_OP: SET_REG_IY_FROM_ADDRESS_BUS_
+
+  # POP IY
+  POP_IY:
+    val: '0xE1'
+    template: pop_template
+    changes:
+      XXX_ADDRESS_1: SET_ADDRESS_BUS_FROM_SP
+      XXX_ADDRESS_2: SET_ADDRESS_BUS_FROM_SP
+      XXX_SET_REG_FROM_ADDRESS_BUS_1: SET_REG_SP_FROM_ADDRESS_BUS_
+      XXX_SET_REG_FROM_ADDRESS_BUS_2: SET_REG_SP_FROM_ADDRESS_BUS_
+      XXX_SET_LOW_BYTE: SET_REG_IYL_FROM_TMP
+      XXX_SET_HIGH_BYTE: SET_REG_IYH_FROM_TMP
+
+  # EX (SP),IY
+  EX_SP_IY:
+    val: '0xE3'
+    template: EX_SP_RR_template
+    changes:
+      XXX_SET_DATA_BUS_FROM_H: SET_DATA_BUS_FROM_IYH
+      XXX_SET_DATA_BUS_FROM_L: SET_DATA_BUS_FROM_IYL
+      XXX_SET_REG_H_FROM_TMP: SET_REG_IYH_FROM_TMP
+      XXX_SET_REG_L_FROM_TMP: SET_REG_IYL_FROM_TMP
+
+  # PUSH IY
+  PUSH_IY:
+    val: '0xE5'
+    template: push_template
+    changes:
+      XXX_SET_TMP_REG_1: SET_REG_TMP_FROM_IYH
+      XXX_SET_TMP_REG_2: SET_REG_TMP_FROM_IYL
+
+  # JP (IY)
+  JP_IY:
+    val: '0xE9'
+    template:  jp_template
+    changes:
+      XXX_SET_ADDRESS_BUS_FROM_X: SET_ADDRESS_BUS_FROM_IY
+
+  # LD SP, IY
+  LD_SP_IY:
+    val: '0xF9'
+    template:
+    micro_code:
+      - # T4_0
+        - CANCEL_BUSREQ_CHECK
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+      - # T5_0
+        - SET_REG_TMP_FROM_IYH
+        - SET_RFSH_TO_HIGH
+      - # T5_1
+        - SET_REG_SPH_FROM_TMP
+        - CHECK_FOR_BUSREQ
+      - # T6_0
+        - SET_REG_TMP_FROM_IYL
+      - # T6_1
+        - SET_REG_SPL_FROM_TMP
+        - CHANGE_STATE_TO_STANDARD_FETCH
+    next_fetch:
+
+  # BIT opcodes
+  FDCB:
+    val: '0xCB'
+    template:
+    micro_code:
+      - # T4_0
+      - # T4_1
+        - SET_MREQ_TO_HIGH
+        - CHANGE_STATE_TO_FETCH_NO_NMI
+    next_fetch:
+      - # T1_0 MEMORY READ GET d
+        - SET_ADDRESS_BUS_FROM_PC #or some orther 16 bit register
+        - OUT_ADDRESS_BUS
+        - SET_RFSH_TO_HIGH
+      - # T1_1
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+        - CHECK_FOR_BUSREQ
+      - # T3_0
+        - IN_DATA
+        - SET_REG_TMP
+      - # T3_1
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+        - SET_REG_A_FROM_TMP # SET_REG_TMP_FROM_X
+      - # T1_0 IY + d
+        - SET_ADDRESS_BUS_FROM_PC
+        - OUT_ADDRESS_BUS
+        - SET_REG_W_0
+        - SET_REG_ACU
+        - SET_REG_TMP_FROM_IYL
+      - # T1_1
+        - ALU_ADD
+        - SET_MREQ_TO_LOW
+        - SET_RD_TO_LOW
+      - # T2_0
+        - SET_REG_TMP_FROM_A
+        - SET_RFSH_TO_HIGH
+        - INC_ADDRESS_BUS
+      - # T2_1
+        - SET_REG_Z_FROM_TMP
+        - CHECK_FOR_WAIT
+        - SET_REG_PC_FROM_ADDRESS_BUS_
+      - # T3_0
+        - SET_REG_TMP_FROM_W
+        - IN_DATA
+        - SET_REG_INST
+      - # T3_1
+        - SET_REG_A_FROM_TMP
+        - SET_MREQ_TO_HIGH
+        - SET_RD_TO_HIGH
+      - # T4_0
+        - SET_REG_ACU
+        - SET_REG_TMP_FROM_IYH
+      - # T4_1
+        - ALU_ADC
+        - CHECK_FOR_BUSREQ
+        - CHANGE_STATE_TO_OPCODE_DDCB
+
+  # LD r, (IY+d)
+  LD_B_IY_d:
+    val: '0x46'
+    template: ld_r_rr_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_SAVE_SET_REG_X_FROM_TMP: SET_REG_B_FROM_TMP
+  LD_C_IY_d:
+    val: '0x4E'
+    template: ld_r_rr_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_SAVE_SET_REG_X_FROM_TMP: SET_REG_C_FROM_TMP
+  LD_D_IY_d:
+    val: '0x56'
+    template: ld_r_rr_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_SAVE_SET_REG_X_FROM_TMP: SET_REG_D_FROM_TMP
+  LD_E_IY_d:
+    val: '0x5E'
+    template: ld_r_rr_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_SAVE_SET_REG_X_FROM_TMP: SET_REG_E_FROM_TMP
+  LD_H_IY_d:
+    val: '0x66'
+    template: ld_r_rr_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_SAVE_SET_REG_X_FROM_TMP: SET_REG_H_FROM_TMP
+  LD_L_IY_d:
+    val: '0x6E'
+    template: ld_r_rr_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_SAVE_SET_REG_X_FROM_TMP: SET_REG_L_FROM_TMP
+  LD_A_IY_d:
+    val: '0x7E'
+    template: ld_r_rr_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_SAVE_SET_REG_X_FROM_TMP: SET_REG_A_FROM_TMP
+
+  # LD (IY+d), r
+  LD_IY_d_B:
+    val: '0x70'
+    template: ld_rr_r_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_DATA: SET_DATA_BUS_FROM_B
+  LD_IY_d_C:
+    val: '0x71'
+    template: ld_rr_r_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_DATA: SET_DATA_BUS_FROM_C
+  LD_IY_d_D:
+    val: '0x72'
+    template: ld_rr_r_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_DATA: SET_DATA_BUS_FROM_D
+  LD_IY_d_E:
+    val: '0x73'
+    template: ld_rr_r_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_DATA: SET_DATA_BUS_FROM_E
+  LD_IY_d_H:
+    val: '0x74'
+    template: ld_rr_r_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_DATA: SET_DATA_BUS_FROM_H
+  LD_IY_d_L:
+    val: '0x75'
+    template: ld_rr_r_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_DATA: SET_DATA_BUS_FROM_L
+  LD_IY_d_A:
+    val: '0x77'
+    template: ld_rr_r_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_DATA: SET_DATA_BUS_FROM_A
+
+  # LD (IY+d), n
+  LD_IY_d_n:
+    val: '0x36'
+    template: ld_rr_n_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      
+  # INC (IY+d)
+  INC_IY_d:
+    val: '0x34'
+    template: dd_fd_alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_INC_TMP
+  
+  # DEC (IY+d)
+  DEC_IY_d:
+    val: '0x35'
+    template: dd_fd_alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_DEC_TMP
+
+  # ADD A, (IY+d)
+  ADD_A_IY_d:
+    val: '0x86'
+    template: alu_one_byte_reg_memory_read_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_ADD
+  
+  # ADC A, (IY+d)
+  ADC_A_IY_d:
+    val: '0x8E'
+    template: alu_one_byte_reg_memory_read_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_ADC
+
+  # SUB (IY+d)
+  SUB_IY_d:
+    val: '0x96'
+    template: alu_one_byte_reg_memory_read_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_SUB
+
+  # SBC A, (IY+d)
+  SBC_A_IY_d:
+    val: '0x9E'
+    template: alu_one_byte_reg_memory_read_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_SBC
+
+  # AND (IY+d)
+  AND_IY_d:
+    val: '0xA6'
+    template: alu_one_byte_reg_memory_read_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_AND
+
+  # XOR (IY+d)
+  XOR_IY_d:
+    val: '0xAE'
+    template: alu_one_byte_reg_memory_read_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_XOR
+
+  # OR (IY+d)
+  OR_IY_d:
+    val: '0xB6'
+    template: alu_one_byte_reg_memory_read_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_OR
+
+  # CP (IY+d)
+  CP_IY_d:
+    val: '0xBE'
+    template: alu_one_byte_reg_memory_read_d
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_CP
+
+  

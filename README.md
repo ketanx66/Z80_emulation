@@ -1,0 +1,4 @@
+# Emulation of Z80 Processor
+
+## Introduction
+This repository contains the code and documentation for the engineering thesis titled "Emulation of Z80 Processor." The aim of this thesis is to present the challenges associated with accurately emulating the Z80 processor and to provide a platform to facilitate the implementation of an emulator based on available documentation and the real physical behavior of the processor. To achieve this, programs have been developed to run and analyze the state of the processor pins during its operation, and an emulator has been constructed based on the collected information.

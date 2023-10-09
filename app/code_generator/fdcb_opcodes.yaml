@@ -1,0 +1,237 @@
+fdcb_opcodes:
+  #RLC (IY+d), r
+  RLC_IY_d:
+    val: '0x06'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_RLC_TMP
+  
+  #RRC (IY+d), r
+  RRC_IY_d:
+    val: '0x0E'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_RRC_TMP
+
+  #RL (IY+d), r
+  RL_IY_d:
+    val: '0x16'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_RL_TMP
+
+  #RR (IY+d), r
+  RR_IY_d:
+    val: '0x1E'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_RR_TMP
+
+  #SLA (IY+d), r
+  SLA_IY_d:
+    val: '0x26'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_SLA_TMP
+
+  #SRA (IY+d), r
+  SRA_IY_d:
+    val: '0x2E'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_SRA_TMP
+
+  #SRL (IY+d), r
+  SRL_IY_d:
+    val: '0x3E'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_SRL_TMP
+
+  #BIT b, (IY+d)
+  BIT_0_IY_d:
+    val: '0x46'
+    template: alu_bit_b_d_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_BIT_0_TMP
+  BIT_1_IY_d:
+    val: '0x4E'
+    template: alu_bit_b_d_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_BIT_1_TMP
+  BIT_2_IY_d:
+    val: '0x56'
+    template: alu_bit_b_d_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_BIT_2_TMP
+  BIT_3_IY_d:
+    val: '0x5E'
+    template: alu_bit_b_d_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_BIT_3_TMP
+  BIT_4_IY_d:
+    val: '0x66'
+    template: alu_bit_b_d_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_BIT_4_TMP
+  BIT_5_IY_d:
+    val: '0x6E'
+    template: alu_bit_b_d_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_BIT_5_TMP
+  BIT_6_IY_d:
+    val: '0x76'
+    template: alu_bit_b_d_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_BIT_6_TMP
+  BIT_7_IY_d:
+    val: '0x7E'
+    template: alu_bit_b_d_rr
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_BIT_7_TMP
+
+  #RES b, (IY+d)
+  RES_0_IY_d:
+    val: '0x86'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_RES_0_TMP
+  RES_1_IY_d:
+    val: '0x8E'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_RES_1_TMP
+  RES_2_IY_d:
+    val: '0x96'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_RES_2_TMP
+  RES_3_IY_d:
+    val: '0x9E'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_RES_3_TMP
+  RES_4_IY_d:
+    val: '0xA6'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_RES_4_TMP
+  RES_5_IY_d:
+    val: '0xAE'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_RES_5_TMP
+  RES_6_IY_d:
+    val: '0xB6'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_RES_6_TMP
+  RES_7_IY_d:
+    val: '0xBE'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_RES_7_TMP
+  
+  #SET b, (IY+d)
+  SET_0_IY_d:
+    val: '0xC6'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_SET_0_TMP
+  SET_1_IY_d:
+    val: '0xCE'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_SET_1_TMP
+  SET_2_IY_d:
+    val: '0xD6'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_SET_2_TMP
+  SET_3_IY_d:
+    val: '0xDE'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_SET_3_TMP
+  SET_4_IY_d:
+    val: '0xE6'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_SET_4_TMP
+  SET_5_IY_d:
+    val: '0xEE'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_SET_5_TMP
+  SET_6_IY_d:
+    val: '0xF6'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_SET_6_TMP
+  SET_7_IY_d:
+    val: '0xFE'
+    template: alu_one_byte_memory_read_d_write
+    changes:
+      XXX_SET_REG_TMP_FROM_XL: SET_REG_TMP_FROM_IYL
+      XXX_SET_REG_TMP_FROM_XH: SET_REG_TMP_FROM_IYH
+      XXX_ALU_OP: ALU_SET_7_TMP
